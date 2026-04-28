@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퇴직금 Calculator</title>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+body {
+font-family: Arial;
+background: #0f172a;
+color: white;
+padding: 20px;
+}
+
+.container {
+max-width: 420px;
+margin: auto;
+}
+
+h2 {
+text-align: center;
+}
+
+label {
+font-size: 13px;
+color: #94a3b8;
+}
+
+input, button {
+width: 100%;
+padding: 12px;
+margin: 6px 0;
+border-radius: 8px;
+border: none;
+}
+
+input {
+background: #1e293b;
+color: white;
+}
+
+button {
+background: #22c55e;
+font-weight: bold;
+}
+
+.result {
+margin-top: 20px;
+font-size: 24px;
+text-align: center;
+font-weight: bold;
+}
+
+.details {
+margin-top: 15px;
+font-size: 14px;
+color: #cbd5f5;
+}
+
+.info {
+margin-top: 15px;
+font-size: 12px;
+color: #94a3b8;
+text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>퇴직금 Calculator</h2>
+<p style="text-align:center;">Severance Pay / සේවක විශ්‍රාම දීමනා</p>
+
+<label>입사일 (Start Date / ආරම්භය)</label>
+<input type="date" id="start">
+
+<label>퇴사일 (End Date / අවසානය)</label>
+<input type="date" id="end">
+
+<label>최근 3개월 급여 (Last 3 Months Salary)</label>
+<input type="number" id="s1" placeholder="Month 1">
+<input type="number" id="s2" placeholder="Month 2">
+<input type="number" id="s3" placeholder="Month 3">
+
+<button onclick="calc()">Calculate</button>
+
+<div class="result" id="result">퇴직금: ₩0</div>
+
+<div class="details" id="details"></div>
+
+<div class="info">
+✔ 1년 이상 근무 시 지급 (Only if worked 1+ year)<br>
+✔ 예상 금액입니다 (Estimate only)<br>
+✔ 마지막 3개월 급여 기준 계산
+</div>
+
+<div style="text-align:center; margin-top:20px; font-size:12px; color:#64748b;">
+© 2026 KR Udara | Korea Worker Support Tool 🇱🇰
+</div>
+
+</div>
+
+<script>
+function formatDate(date) {
+return date.toISOString().split('T')[0];
+}
+
+function calc(){
+
+let start = new Date(document.getElementById("start").value);
+let end = new Date(document.getElementById("end").value);
+
+let s1 = +document.getElementById("s1").value;
+let s2 = +document.getElementById("s2").value;
+let s3 = +document.getElementById("s3").value;
+
+if(!start.getTime() || !end.getTime() || s1<=0 || s2<=0 || s3<=0){
+alert("Please fill all fields correctly");
+return;
+}
+
+// total working days
+let totalDays = (end - start)/(10006060*24);
+
+// 3 month exact period
+let past = new Date(end);
+past.setMonth(past.getMonth()-3);
+let threeMonthDays = (end - past)/(10006060*24);
+
+let totalSalary = s1+s2+s3;
+let avgDaily = totalSalary / threeMonthDays;
+
+if(totalDays < 365){
+document.getElementById("result").innerText="퇴직금: ₩0";
+document.getElementById("details").innerHTML =
+"❌ 1년 미만 근무 (Less than 1 year)";
+return;
+}
+
+let years = totalDays / 365;
+let severance = avgDaily * 30 * years;
+
+document.getElementById("result").innerText =
+"퇴직금: ₩"+Math.round(severance).toLocaleString();
+
+document.getElementById("details").innerHTML =
+"📅 Start: "+formatDate(start)+"<br>"+
+"📅 End: "+formatDate(end)+"<br><br>"+
+"총 근무일수 (Days): "+Math.floor(totalDays)+"<br>"+
+"근속 연수 (Years): "+years.toFixed(2)+"<br>"+
+"평균 일급 (Daily): ₩"+Math.round(avgDaily).toLocaleString();
+}
+</script>
+
+</body>
+</html>
