@@ -132,10 +132,25 @@ alert("Please fill all fields correctly");
 return;
 }
 
-let start = new Date(startInput + "T00:00:00");
-let end = new Date(endInput + "T00:00:00");
+function parseDate(input) {
+    // if already correct format (yyyy-mm-dd)
+    if (input.includes("-")) {
+        return new Date(input + "T00:00:00");
+    }
 
-if (isNaN(start) || isNaN(end)) {
+    // if user types dd/mm/yyyy
+    if (input.includes("/")) {
+        let parts = input.split("/");
+        return new Date(parts[2] + "-" + parts[1] + "-" + parts[0] + "T00:00:00");
+    }
+
+    return new Date(input);
+}
+
+let start = parseDate(startInput);
+let end = parseDate(endInput);
+
+  if (isNaN(start) || isNaN(end)) {
 alert("Invalid date");
 return;
 }
